@@ -11,18 +11,22 @@ using namespace std;
 #ifndef _MPATHTOOL_HPP_
 #define _MPATHTOOL_HPP_
 
-
-
 namespace toolpath {
 	string joinPath(string prefix, string suffix) {
+		char delim = '/';
+		string sep = "";
+		#if defined(__linux__)
+			delim = '/';
+			sep = "/";
+		#elif defined(_WIN32)
+			delim = '\\';
+			sep = "\\"
+		#endif
 		string result;
-		if (prefix[prefix.size() - 1] == '/') {
+		if (prefix[prefix.size() - 1] == delim) {
 			return prefix + suffix;
-		} else if (prefix[prefix.size() - 1] == '\\') {
-			return prefix + suffix;
-		}
-		else {
-			return prefix + "/" + suffix;
+		} else {
+			return prefix + sep + suffix;
 		}
 	}
 #if defined(__linux__)
