@@ -48,7 +48,13 @@ namespace toolpath {
 		} return ret;
 	}
 	
-	vector <string> getFiles(const string rootpath, const string filename = "*.avi") {
+	void printStringList(const vector <string>& v) {
+		for (size_t i = 0; i < v.size(); i++) {
+			cout << "[" << i << "] = " << v[i].c_str() << endl;
+		}
+	}
+	
+	vector <string> getFiles(const string rootpath, const string pattern = "*.avi") {
 		DIR *pDirRoot = opendir(rootpath.c_str());
 		if (pDirRoot == NULL) {
 			return vector <string> ();
@@ -56,22 +62,40 @@ namespace toolpath {
 		dirent *pSub = NULL;
 		vector <string> lFiles;
 		while(pSub = readdir(pDirRoot)) {
-			string f(pSub->d_name);
+			string fQuery(pSub->d_name);
 			bool isMatch = true;
-			if (f.find("*") != string::npos) {
-				vector <string> lWords = split(f, '*');
+			if (fQuery == "." || fQuery == "..") {
+				isMatch = false;
+			} else if (pattern.find("*") != string::npos) {
+				vector <string> lWords = split(pattern, '*');
 				for (int i=0; i< (int)lWords.size(); i++) {
-					if (f.find(lWords[i]) == string::npos) {
+					size_t iFind;
+					if (i == 0 && lWords[i][0] == '^') {
+						string subpattern = lWords[i].substr(1, lWords[i].size()-1);
+						string subquery = fQuery.substr(0, subpattern.size());
+						iFind = subquery.find(subpattern);
+					} else if (i == lWords.size()-1 && lWords[i][lWords[i].size()-1] == '$'){
+						if (lWords[i].size() == 1) {
+							continue;
+						}
+						string subpattern = lWords[i].substr(0, lWords[i].size() - 1);
+						string subquery = fQuery.substr(fQuery.size() - subpattern.size(), subpattern.size());
+						iFind = subquery.find(subpattern);
+					} else {
+						iFind = fQuery.find(lWords[i]);
+					}
+					if (iFind == string::npos) {
 						isMatch = false;
+					} else {
+						size_t iNext = iFind + lWords.size();
+						fQuery = fQuery.substr(iNext-1, fQuery.size() - iNext+1);
 					}
 				}
-			} else {
-				if (f == filename) {
-					isMatch = true;
-				}
+			} else if (fQuery != pattern) {
+				isMatch = false;
 			}
 			if (isMatch) {
-				lFiles.push_back(f);
+				lFiles.push_back(pSub->d_name);
 			}
 		}
 		return lFiles;
@@ -79,9 +103,9 @@ namespace toolpath {
 
 #elif defined(_WIN32)
 	// rootpath should be absolute path
-	vector <string> getFiles(const string rootpath, const string filename = "*.avi") {
+	vector <string> getFiles(const string rootpath, const string pattern = "*.avi") {
 		// get absolute file path
-		string query = joinPath(rootpath, filename);
+		string query = joinPath(rootpath, pattern);
 		// check if such kind of file exists
 		_finddata_t fileinfo;
 		long hFind = _findfirst(query.c_str(), &fileinfo);
@@ -98,23 +122,17 @@ namespace toolpath {
 		return lFiles;
 	}
 #endif
-	vector <string> getFiles(const char* rootpath, const char* filename = "*.avi") {
-		return getFiles(string(rootpath), string(filename) );
+	vector <string> getFiles(const char* rootpath, const char* pattern = "*.avi") {
+		return getFiles(string(rootpath), string(pattern) );
 	}
 
 }
 
 namespace debug_toolpath {
 	using namespace toolpath;
-	void printStringList(const vector <string>& v) {
-		for (size_t i = 0; i < v.size(); i++) {
-			cout << "[" << i << "] = " << v[i].c_str() << endl;
-		}
-	}
 	
 	void debug_path() {
-		vector <string> lHpp = getFiles(".", "*.hpp");
-		printStringList(lHpp);
+		vector <string> lHpp = getFiles(".", "^M*pp");
 		string rootdir = "tools of coding";
 		vector <string> lPathHpp;
 		for(int i=0; i < (int)lHpp.size(); i++) {
