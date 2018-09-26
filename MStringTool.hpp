@@ -14,6 +14,20 @@ namespace toolstring {
 			cout << "[" << i << "] = " << v[i] << endl;
 		}
 	}
+	
+	string replace(const string& src, char tgt = '\\', char rep = '/') {
+		string dst = src;
+		for (int i=0; i<(int)src.size(); i++) {
+			if (src[i] == tgt) {
+				dst[i] = rep;
+			}
+		}
+		return dst;
+	}
+	
+	string replace(const char* src, char tgt = '\\', char rep = '/' ) {
+		return replace(string(src), tgt, rep);
+	}
 
 	vector <string> split(const string& src, char delim = ' ') {
 		int iL = 0, iR = 0;
@@ -21,7 +35,7 @@ namespace toolstring {
 		while (src[iL] == delim) {  // jump all delims at left space
 			iL++;
 		}
-		for (int i = iL; i < src.size(); i++) {  // traverse all char
+		for (int i = iL; i < (int)src.size(); i++) {  // traverse all char
 			if (src[i] == delim) {  // delim found
 				iR = i;  // set right marker
 				ret.push_back(src.substr(iL, iR - iL));  // split current word

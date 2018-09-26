@@ -2,9 +2,9 @@
 useful and independent toolsets for operations of string, path, matrix, memory etc. in c++
 
 ## aims
-
-> 1. StringTool: split, rstrip, lstrip;
-> 2. PathTool: joinPath, getRelativeDir, getFileName, getParentPath, safeCreateFile, appendToFile, safeReadFile;
+> (<font color="red">complete entries are labeled in red.</font>)
+> 1. StringTool: <font color="red">split, rstrip, lstrip, replace</font>;
+> 2. PathTool: <font color="red">joinPath, getAbsPath</font>, getParentPath, getFileName, getAbsPath, safeCreateFile, appendToFile, safeReadFile;
 > 3. MatTool (OpenCV-based, txt-format): readMat, saveMat;
 > 4. MemoryTool: getMemorySize.
 
@@ -12,6 +12,8 @@ useful and independent toolsets for operations of string, path, matrix, memory e
 
 > 1. modify func getFiles at MPathTool.hpp;
 > 2. add simple RE features (*, ^, $) in func getFiles.
+> 3. add func getAbsPath at MPathTool.hpp;
+> 4. add func replace at MStringTool.hpp.
 
 
 ## 20180925
