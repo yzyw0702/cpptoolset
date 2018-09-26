@@ -2,9 +2,9 @@
 useful and independent toolsets for operations of string, path, matrix, memory etc. in c++
 
 ## aims
-> (<font color="red">complete entries are labeled in red.</font>)
-> 1. StringTool: <font color="red">split, rstrip, lstrip, replace</font>;
-> 2. PathTool: <font color="red">joinPath, getAbsPath</font>, getParentPath, getFileName, getAbsPath, safeCreateFile, appendToFile, safeReadFile;
+> (`complete entries are highlighted.`)
+> 1. StringTool: `split, rstrip, lstrip, replace`
+> 2. PathTool: `joinPath, getAbsPath`, getParentPath, getFileName, getAbsPath, safeCreateFile, appendToFile, safeReadFile;
 > 3. MatTool (OpenCV-based, txt-format): readMat, saveMat;
 > 4. MemoryTool: getMemorySize.
 
