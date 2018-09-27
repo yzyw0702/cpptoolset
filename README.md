@@ -1,10 +1,10 @@
-# cppToolSet
-useful and independent toolsets for operations of string, path, matrix, memory etc. in c++
+# cpptoolset
+simple-pre-requisite and file-independent tool kits for operations of string, path, matrix, memory etc. in c++
 
 ## aims
-> (`complete entries are highlighted.`)
+> (`Finished entries are highlighted.`)
 > 1. StringTool: `split, rstrip, lstrip, replace`
-> 2. PathTool: `joinPath, getAbsPath`, getParentPath, getFileName, getAbsPath, safeCreateFile, appendToFile, safeReadFile;
+> 2. PathTool: `joinPath, getAbsPath, getFiles`, getParentPath, getFileName, getAllFiles, safeCreateFile, appendToFile, safeReadFile;
 > 3. MatTool (OpenCV-based, txt-format): readMat, saveMat;
 > 4. MemoryTool: getMemorySize.
 
@@ -15,14 +15,12 @@ useful and independent toolsets for operations of string, path, matrix, memory e
 > 3. add func getAbsPath at MPathTool.hpp;
 > 4. add func replace at MStringTool.hpp.
 
-
 ## 20180925
 
 > 1. modify and test MPathTool.hpp to make it linux-compatible;
 > 2. set local git linked with github repository;
 > 3. push local repository online.
 > 4. add function getAllFiles in MPathTool.hpp;
-
 
 ## 20180924
 

@@ -1,11 +1,14 @@
 #if defined(__linux__)
-	#include <sys/stat.h>
-	#include <dirent.h>
-	#include <unistd.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <unistd.h>
 #elif defined(_WIN32)
-	#include <io.h>
-	#include <direct.h>
+#include <io.h>
+#include <direct.h>
+#include <Windows.h>
+#include <wchar.h>
 #endif
+
 #include <stdio.h>
 #include <string>
 #include <iostream>
@@ -42,7 +45,7 @@ namespace toolpath {
 
 	string replace(const string& src, char tgt = '\\', char rep = '/') {
 		string dst = src;
-		for (int i=0; i<(int)src.size(); i++) {
+		for (int i = 0; i<(int)src.size(); i++) {
 			if (src[i] == tgt) {
 				dst[i] = rep;
 			}
@@ -53,13 +56,13 @@ namespace toolpath {
 	string joinPath(string prefix, string suffix) {
 		char delim = '/';
 		string sep = "";
-	#if defined(__linux__)
+#if defined(__linux__)
 		delim = '/';
 		sep = "/";
-	#elif defined(_WIN32)
+#elif defined(_WIN32)
 		delim = '\\';
 		sep = "\\";
-	#endif
+#endif
 		if (prefix[prefix.size() - 1] == delim) {
 			return prefix + suffix;
 		}
@@ -126,10 +129,10 @@ namespace toolpath {
 	// rootpath should be absolute path
 	vector <string> getFiles(const string rootpath, const string pattern = "*.avi") {
 		// get absolute file path
-		string query = joinPath(rootpath, pattern);
+		string queryDir = joinPath(rootpath, "*");
 		// check if such kind of file exists
 		_finddata_t fileinfo;
-		long hFind = _findfirst("*.*", &fileinfo);
+		long hFind = _findfirst(queryDir.c_str(), &fileinfo);
 		// filter all files with pattern
 		vector<string> lFiles;
 		while (!_findnext(hFind, &fileinfo)) {
@@ -175,28 +178,34 @@ namespace toolpath {
 			}
 		} _findclose(hFind);
 		return lFiles;
-}
+	}
 
 #endif
 
+	vector <string> getFiles(const char* rootpath, const char* pattern = "*.avi") {
+		return getFiles(string(rootpath), string(pattern));
+	}
+
 	string getAbsPath(const string path) {
 		string respath;
-	#if defined(__linux__)
+#if defined(__linux__)
 		respath = replace(path, '\\', '/');
 		if (respath[0] == '/') {
 			return respath;
 		}
-	#elif defined(_WIN32)
+#elif defined(_WIN32)
 		respath = replace(path, '/', '\\');
 		if (respath.substr(1, 2) == ":\\") {
 			return respath;
 		}
-	#endif
-		if (path[0] == '.') {
+#endif
+		if (path.substr(0, 2) == "./" || path.substr(0, 2) == ".\\") {
 			respath = path.substr(2, path.size() - 2);
-		} else if (path.substr(0, 2) == "..") {
+		}
+		else if (path.substr(0, 2) == "..") {
 			respath = path.substr(3, path.size() - 3);
-		} else {
+		}
+		else {
 			respath = path;
 		}
 		char cwd[256];
@@ -204,21 +213,84 @@ namespace toolpath {
 		return joinPath(string(cwd), respath);
 	}
 
-	vector <string> getFiles(const char* rootpath, const char* pattern = "*.avi") {
-		return getFiles(string(rootpath), string(pattern));
-	}
-
 	string getAbsPath(const char* path) {
-		string getParentPath(string(path));
+		string getAbsPath(string(path));
 	}
 
-	vector <string> getAllFiles(const string rootpath, const string pattern = "*.avi") {
-		vector <string> lRelativePaths = getFiles(rootpath, pattern);
-		vector <string> lAllPaths;
-		return lAllPaths;
+	string getParentDir(const string path) {
+		char delim;
+	#if defined(__linux__)
+		delim = '/';
+	#elif defined(_WIN32)
+		delim = '\\';
+	#endif
+		size_t iLast = path.find_last_of(delim, path.size());
+		string ret;
+		if (iLast < path.size()) ret = path.substr(0, iLast);
+		else ret = "";
+		return ret;
 	}
 
-	vector <string> getAllFiles(const char* rootpath, const char* pattern = "*.avi") {
+	bool isExist(const string path) {
+
+#if defined(__linux__)
+		return ((access(path.c_str(), F_OK)) == 0);
+#elif defined(_WIN32)
+		return ((_access(path.c_str(), 0)) != -1);
+#endif
+	}
+
+	bool isFileOrDirectory(const string path) {
+#if defined(__linux__)
+		DIR *pDir = opendir(path.c_str());
+		if (pDir != NULL) {
+			closedir(pDir);
+			return false;
+		}
+		else
+			return true;
+#elif defined(_WIN32)
+		DWORD flagFile = GetFileAttributesA(path.c_str());
+		return !(flagFile == FILE_ATTRIBUTE_DIRECTORY);
+#endif
+	}
+
+	bool isFileOrDirectory(const char* path) {
+		return isFileOrDirectory(string(path));
+	}
+
+	vector <string> getAllFiles(const string rootpath, const string pattern = "*.dav") {
+		vector <string> lRelativePaths = getFiles(rootpath, "*");
+		if (lRelativePaths.size() == 0)
+			return vector <string>();
+		vector <string> lAllFiles;
+		vector <string> lAllCurrRelativeFiles = getFiles(rootpath, pattern);
+		for (int i = 0; i < (int)lAllCurrRelativeFiles.size(); i++) {
+			if (rootpath == "." || rootpath == "./" || rootpath == ".\\")
+				lAllFiles.push_back(getAbsPath(lAllCurrRelativeFiles[i]));
+			else
+				lAllFiles.push_back(joinPath(rootpath, lAllCurrRelativeFiles[i]));
+		}
+		//vector <string> lSubDir;
+		for (int i = 0; i < (int)lRelativePaths.size(); i++) {
+			string absPath;
+			if (rootpath == "." || rootpath == "./" || rootpath == ".\\")
+				absPath = getAbsPath(lRelativePaths[i]);
+			else
+				absPath = joinPath(rootpath, lRelativePaths[i]);
+			if (isFileOrDirectory(absPath)) {
+
+			}
+			if (!isFileOrDirectory(absPath)) {
+				//lSubDir.push_back(absPath);
+				vector <string> lNewFiles = getAllFiles(absPath, pattern);
+				lAllFiles.insert(lAllFiles.end(), lNewFiles.begin(), lNewFiles.end());
+			}
+		}
+		return lAllFiles;
+	}
+
+	vector <string> getAllFiles(const char* rootpath, const char* pattern = "*.dav") {
 		return getAllFiles(string(rootpath), string(pattern));
 	}
 
@@ -239,6 +311,23 @@ namespace debug_toolpath {
 		string pathHpp1 = getAbsPath(lpp[0]);
 		string pathHpp2 = getAbsPath(lPathpp[0]);
 		cout << pathHpp1 << endl << pathHpp2 << endl;
+
+		vector <string> lPaths = getFiles(".", "*");
+		printStringList(lPaths);
+		for (int i = 0; i< (int)lPaths.size(); i++) {
+			string absPath = getAbsPath(lPaths[i]);
+			if (!isExist(absPath)) {
+				cout << absPath << " not exists!\n";
+				continue;
+			}
+			if (isFileOrDirectory(absPath)) cout << absPath << " is a file.\n";
+			else cout << absPath << " is a directory.\n";
+		}
+
+		cout << "parent = " << getParentDir(getAbsPath(lPaths[0])) << endl;
+
+		vector <string> lAllPaths = getAllFiles(".", "*e$");
+		printStringList(lAllPaths);
 	}
 }
 
