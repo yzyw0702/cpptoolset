@@ -4,9 +4,13 @@ simple-pre-requisite and file-independent tool kits for operations of string, pa
 ## aims
 > (`Finished entries are highlighted.`)
 > 1. StringTool: `split, rstrip, lstrip, replace`
-> 2. PathTool: `joinPath, getAbsPath, getFiles`, getParentPath, getFileName, getAllFiles, safeCreateFile, appendToFile, safeReadFile;
+> 2. PathTool: `joinPath, getAbsPath, getFiles, getParentPath, getAllFiles`, getFileName, safeCreateFile, appendToFile, safeReadFile;
 > 3. MatTool (OpenCV-based, txt-format): readMat, saveMat;
 > 4. MemoryTool: getMemorySize.
+
+## 20180927
+> 1. add func getAllFiles and func getParentPath in MPathTool.hpp;
+> 2. fix bug in windows-version func getFiles in MPathTool.hpp.
 
 ## 20180926
 
