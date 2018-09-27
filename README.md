@@ -6,8 +6,9 @@ zero-prelim and file-independent tool kits for operations of string, path, memor
 > 2. on windows-msvs: load all .hpp and testToolset.cpp into visual studio (recommend 2017), and add #include "stdafx.h" at the beginning of each .hpp file, if needed.
 
 ## aims
-> (`Finished entries are highlighted.`)
-> (`All Tested on both linux-gcc and windows-msvs`)
+> * (`Finished entries are highlighted.`)
+> * (`All Tested on both linux-gcc and windows-msvs`)
+
 > 1. StringTool: `split, rstrip, lstrip, replace`
 > 2. PathTool: `joinPath, getAbsPath, getFiles, getParentPath, getAllFiles, getFileName`, safeCreateFile, appendToFile, safeReadFile;
 > 3. MemoryTool: getMemorySize;
