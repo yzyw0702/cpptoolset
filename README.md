@@ -21,8 +21,9 @@ zero-prelim and file-independent tool kits for operations of string, path, memor
 > 10. WebTool: emailReport.
 
 ## 20180927
-> 1. add func getAllFiles and func getParentPath in MPathTool.hpp;
-> 2. fix bug in windows-version func getFiles in MPathTool.hpp.
+> 1. add func getAllFiles in MPathTool.hpp;
+> 2. fix bug in windows-version func getFiles in MPathTool.hpp;
+> 3. add func getParentPath, getFileName in MPathTool.hpp;
 
 ## 20180926
 
