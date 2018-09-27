@@ -2,11 +2,17 @@
 zero-prelim and file-independent tool kits for operations of string, path, memory, matrix, time, video, roi. in c++
 
 ## test hint
-> 1. on liniux-gcc: use command 
+> * on liniux-gcc: use command 
 ```bash
 	g++ *.hpp testToolset.cpp -o test.o && ./test.o > report.out && vim report.out
 ```
-> 2. on windows-msvs: load all .hpp and testToolset.cpp into visual studio (recommend 2017), and add #include "stdafx.h" at the beginning of each .hpp file, if needed.
+
+> * on windows-msvs: load all .hpp and testToolset.cpp into visual studio 
+```cpp
+	#include "stdafx.h"
+	// the major content of .hpp ...
+```
+> * and add the above line at the beginning of each .hpp file, if needed.
 
 ## aims
 > * (`Finished entries are highlighted.`)
