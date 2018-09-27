@@ -231,13 +231,24 @@ namespace toolpath {
 		return ret;
 	}
 
+	string getFileName(const string path) {
+		char delim;
+	#if defined(__linux__)
+		delim = '/';
+	#elif defined(_WIN32)
+		delim = '\\';
+	#endif
+		vector <string> lTerms = split(path, delim);
+		return lTerms[lTerms.size()-1];
+	}
+
 	bool isExist(const string path) {
 
-#if defined(__linux__)
+	#if defined(__linux__)
 		return ((access(path.c_str(), F_OK)) == 0);
-#elif defined(_WIN32)
+	#elif defined(_WIN32)
 		return ((_access(path.c_str(), 0)) != -1);
-#endif
+	#endif
 	}
 
 	bool isFileOrDirectory(const string path) {
@@ -253,10 +264,6 @@ namespace toolpath {
 		DWORD flagFile = GetFileAttributesA(path.c_str());
 		return !(flagFile == FILE_ATTRIBUTE_DIRECTORY);
 #endif
-	}
-
-	bool isFileOrDirectory(const char* path) {
-		return isFileOrDirectory(string(path));
 	}
 
 	vector <string> getAllFiles(const string rootpath, const string pattern = "*.dav") {
@@ -290,16 +297,21 @@ namespace toolpath {
 		return lAllFiles;
 	}
 
-	vector <string> getAllFiles(const char* rootpath, const char* pattern = "*.dav") {
-		return getAllFiles(string(rootpath), string(pattern));
-	}
-
 }
 
 namespace debug_toolpath {
 	using namespace toolpath;
 
 	void debug_path() {
+		cout << "# ---- MPathTool ----\n";
+		// test func joinPath
+		cout << "\n## Test func joinPath\n";
+		string prefix = "directory";
+		string filename = "filename.txt";
+		cout << joinPath(prefix, filename) << endl;
+		
+		// test func getFiles
+		cout << "\n## Test func getFiles\n";
 		vector <string> lpp = getFiles(".", "*pp$");
 		string rootdir = ".\\";
 		vector <string> lPathpp;
@@ -307,11 +319,15 @@ namespace debug_toolpath {
 			lPathpp.push_back(rootdir + lpp[i]);
 		}
 		printStringList(lPathpp);
-
+		
+		// test func getAbsPath
+		cout << "\n## Test func getAbsPath\n";
 		string pathHpp1 = getAbsPath(lpp[0]);
 		string pathHpp2 = getAbsPath(lPathpp[0]);
 		cout << pathHpp1 << endl << pathHpp2 << endl;
-
+		
+		// test func isFileOrDirectory
+		cout << "\n## Test func isFileOrDirectory\n";
 		vector <string> lPaths = getFiles(".", "*");
 		printStringList(lPaths);
 		for (int i = 0; i< (int)lPaths.size(); i++) {
@@ -323,9 +339,17 @@ namespace debug_toolpath {
 			if (isFileOrDirectory(absPath)) cout << absPath << " is a file.\n";
 			else cout << absPath << " is a directory.\n";
 		}
-
+		
+		// test func getParentDir
+		cout << "\n## Test func getParentDir\n";
 		cout << "parent = " << getParentDir(getAbsPath(lPaths[0])) << endl;
-
+		
+		// test func getFileName
+		cout << "\n## Test func getFileName\n";
+		cout << "filename = " << getFileName(getAbsPath(lPaths[0])) << endl;
+		
+		// test func getAllFiles
+		cout << "\n## Test func getAllFiles\n";
 		vector <string> lAllPaths = getAllFiles(".", "*e$");
 		printStringList(lAllPaths);
 	}

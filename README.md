@@ -1,12 +1,23 @@
 # cpptoolset
-simple-pre-requisite and file-independent tool kits for operations of string, path, matrix, memory etc. in c++
+zero-prelim and file-independent tool kits for operations of string, path, memory, matrix, time, video, roi. in c++
+
+## test hint
+> 1. on lniux-gcc: use command "g++ *.hpp testToolset.cpp -o test.o && ./test.o > report.out && vim report.out";
+> 2. on windows-msvs: load all .hpp and testToolset.cpp into visual studio (recommend 2017), and add #include "stdafx.h" at the beginning of each .hpp file, if needed.
 
 ## aims
 > (`Finished entries are highlighted.`)
+> (`All Tested on both linux-gcc and windows-msvs`)
 > 1. StringTool: `split, rstrip, lstrip, replace`
-> 2. PathTool: `joinPath, getAbsPath, getFiles, getParentPath, getAllFiles`, getFileName, safeCreateFile, appendToFile, safeReadFile;
-> 3. MatTool (OpenCV-based, txt-format): readMat, saveMat;
-> 4. MemoryTool: getMemorySize.
+> 2. PathTool: `joinPath, getAbsPath, getFiles, getParentPath, getAllFiles, getFileName`, safeCreateFile, appendToFile, safeReadFile;
+> 3. MemoryTool: getMemorySize;
+> 4. MatTool (OpenCV-based, yaml-format): readMat, writeMat;
+> 5. TimeTool (date and time): isValidTm, isValidDate, isValidDateTm, getAbsDate, getAbsTm, isDayOrNight, getCurrDateTm, getTmDiff, sortByDateTm;
+> 6. VideoTool: readVideoSeries, replayVideoSeries, setTmPtInVideoSeries, setVideoRange, setLengthScale;
+> 7. RoiTool: setRectRoi, detectRectRoi, readRectRoiSeries, writeRectRoiSeries;
+> 8. BgTool: getStaticBg, getDynamicBg, refreshDynamicBg;
+> 9. ChipTool: connectArduino, readArduino, writeArduino;
+> 10. WebTool: emailReport.
 
 ## 20180927
 > 1. add func getAllFiles and func getParentPath in MPathTool.hpp;
