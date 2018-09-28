@@ -5,6 +5,7 @@ zero-prelim and file-independent tool kits for operations of string, path, memor
 > * on linux-gcc: use command 
 ```bash
 	rm -rf innertest* && g++ *.hpp testToolset.cpp -o innertest.o 2>innertest-error.txt && ./innertest.o > innertest-report.out && vim innertest-report.out
+	rm -rf innertest*
 ```
 
 > * on windows-msvs: load all .hpp and testToolset.cpp into visual studio 
@@ -19,7 +20,7 @@ zero-prelim and file-independent tool kits for operations of string, path, memor
 > * (`All Tested on both linux-gcc and windows-msvs`)
 
 > 1. StringTool: `split, rstrip, lstrip, replace`
-> 2. PathTool: `joinPath, getAbsPath, getFiles, getParentPath, getAllFiles, getFileName, isFileExist, safeCreateDir`, safeCreateFile, safeAppendFile;
+> 2. PathTool: `joinPath, getAbsPath, getFiles, getParentPath, getAllFiles, getFileName,` `isFileExist, safeCreateDir, safeCreateFile, safeAppendFile`;
 > 3. MemoryTool: getTotalRAMSize;
 > 4. MatTool (OpenCV-based, yaml-format): readMat, writeMat;
 > 5. TimeTool (date and time): isValidTm, isValidDate, isValidDateTm, isDateSeriesContinuous, getAbsDate, getAbsTm, isDayOrNight, getCurrDateTm, getTmDiff, sortByDateTm;

@@ -340,6 +340,18 @@ namespace toolpath {
 		}
 		
 	}
+	
+	void safeAppendFile(const string path, const string s) {
+		if (isFileExist(path) && isFileOrDirectory(path)) {
+			fstream fs(path.c_str(), ios::out | ios::app);
+			fs << s;
+			fs.close();
+		} else {
+			fstream fs(path.c_str(), ios::out);
+			fs << s;
+			fs.close();
+		}
+	}
 
 }
 
@@ -408,6 +420,14 @@ namespace debug_toolpath {
 		string fNew = "./innertest-NewFile.txt";
 		for (int i=0; i < 3; i++) {
 			if (!safeCreateFile(fNew)) cout << "failed to safe-create new file.\n";
+		}
+		
+		// test func safeAppendFile
+		cout << "\n## Test func safeAppendFile\n";
+		string fTarget = getAbsPath("innertest-AppendFile.txt");
+		string strToAppend = "new line\n";
+		for (int i=0; i < 3; i++) {
+			safeAppendFile(fTarget, strToAppend);
 		}
 	}
 }

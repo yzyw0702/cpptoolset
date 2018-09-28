@@ -10,6 +10,6 @@ int main() {
 	
 	// test path toolset
 	using namespace debug_toolpath;
-	debug_path();
+	//debug_path();
 	return 0;
 }
