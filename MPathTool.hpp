@@ -1,17 +1,19 @@
 #if defined(__linux__)
-#include <sys/stat.h>
-#include <dirent.h>
-#include <unistd.h>
+	#include <sys/stat.h>
+	#include <dirent.h>
+	#include <unistd.h>
 #elif defined(_WIN32)
-#include <io.h>
-#include <direct.h>
-#include <Windows.h>
-#include <wchar.h>
+	#include <io.h>
+	#include <direct.h>
+	#include <Windows.h>
+	#include <wchar.h>
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <vector>
 using namespace std;
 #ifndef _MPATHTOOL_HPP_
@@ -19,6 +21,7 @@ using namespace std;
 
 namespace toolpath {
 
+	/* --- cite from MStringTool.hpp */
 	vector <string> split(const string& src, char delim = ' ') {
 		int iL = 0, iR = 0;
 		vector <string> ret;
@@ -53,16 +56,18 @@ namespace toolpath {
 		return dst;
 	}
 
+	/* --- cite end */
+	
 	string joinPath(string prefix, string suffix) {
 		char delim = '/';
 		string sep = "";
-#if defined(__linux__)
+	#if defined(__linux__)
 		delim = '/';
 		sep = "/";
-#elif defined(_WIN32)
+	#elif defined(_WIN32)
 		delim = '\\';
 		sep = "\\";
-#endif
+	#endif
 		if (prefix[prefix.size() - 1] == delim) {
 			return prefix + suffix;
 		}
@@ -182,23 +187,19 @@ namespace toolpath {
 
 #endif
 
-	vector <string> getFiles(const char* rootpath, const char* pattern = "*.avi") {
-		return getFiles(string(rootpath), string(pattern));
-	}
-
 	string getAbsPath(const string path) {
 		string respath;
-#if defined(__linux__)
+	#if defined(__linux__)
 		respath = replace(path, '\\', '/');
 		if (respath[0] == '/') {
 			return respath;
 		}
-#elif defined(_WIN32)
+	#elif defined(_WIN32)
 		respath = replace(path, '/', '\\');
 		if (respath.substr(1, 2) == ":\\") {
 			return respath;
 		}
-#endif
+	#endif
 		if (path.substr(0, 2) == "./" || path.substr(0, 2) == ".\\") {
 			respath = path.substr(2, path.size() - 2);
 		}
@@ -211,10 +212,6 @@ namespace toolpath {
 		char cwd[256];
 		getcwd(cwd, 256);
 		return joinPath(string(cwd), respath);
-	}
-
-	string getAbsPath(const char* path) {
-		string getAbsPath(string(path));
 	}
 
 	string getParentDir(const string path) {
@@ -242,7 +239,7 @@ namespace toolpath {
 		return lTerms[lTerms.size()-1];
 	}
 
-	bool isExist(const string path) {
+	bool isFileExist(const string path) {
 
 	#if defined(__linux__)
 		return ((access(path.c_str(), F_OK)) == 0);
@@ -252,7 +249,7 @@ namespace toolpath {
 	}
 
 	bool isFileOrDirectory(const string path) {
-#if defined(__linux__)
+	#if defined(__linux__)
 		DIR *pDir = opendir(path.c_str());
 		if (pDir != NULL) {
 			closedir(pDir);
@@ -260,10 +257,10 @@ namespace toolpath {
 		}
 		else
 			return true;
-#elif defined(_WIN32)
+	#elif defined(_WIN32)
 		DWORD flagFile = GetFileAttributesA(path.c_str());
 		return !(flagFile == FILE_ATTRIBUTE_DIRECTORY);
-#endif
+	#endif
 	}
 
 	vector <string> getAllFiles(const string rootpath, const string pattern = "*.dav") {
@@ -295,6 +292,53 @@ namespace toolpath {
 			}
 		}
 		return lAllFiles;
+	}
+
+	bool safeCreateDirectory(const string path) {
+		if (!isFileExist(path) || isFileOrDirectory(path)) {
+		#if defined(__linux__)
+			mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH);
+		#elif defined(_WIN32)
+			mkdir(path.c_str());
+		#endif
+			return true;
+		}
+		else{
+			cout << "\t[warning] failed to create the directory '" << path << "' or it already exists.\n";
+			return false;
+		}
+	}
+	
+	bool safeCreateFile(const string path) {
+		if (isFileExist(path) && isFileOrDirectory(path)) {
+			cout << "\t[warning] File " << path << " already exists.\n";
+			string src = path;
+			string dst = path + "-history";
+			for (int i=0; isFileExist(dst); i++) {
+				char idx[25];
+			#if defined(__linux__)
+				sprintf(idx, "%d", i+1);
+			#elif defined(_WIN32)
+				itoa(i+1, idx, 10);
+			#endif
+				dst = path + "-history-" + string(idx);
+			}
+		#if defined(__linux__)
+			string cmd = "mv \"" + src + "\" \"" + dst + "\"";
+			system(cmd.c_str());
+		#elif defined(_WIN32)
+			MoveFileA(src.c_str(), dst.c_str());
+		#endif
+		}
+		ofstream ofs;
+		ofs.open(path.c_str());
+		if (!ofs.is_open())
+			return false;
+		else {
+			ofs.close();
+			return true;
+		}
+		
 	}
 
 }
@@ -332,7 +376,7 @@ namespace debug_toolpath {
 		printStringList(lPaths);
 		for (int i = 0; i< (int)lPaths.size(); i++) {
 			string absPath = getAbsPath(lPaths[i]);
-			if (!isExist(absPath)) {
+			if (!isFileExist(absPath)) {
 				cout << absPath << " not exists!\n";
 				continue;
 			}
@@ -352,6 +396,19 @@ namespace debug_toolpath {
 		cout << "\n## Test func getAllFiles\n";
 		vector <string> lAllPaths = getAllFiles(".", "*e$");
 		printStringList(lAllPaths);
+		
+		// test func safeCreateDirectory
+		cout << "\n## Test func safeCreateDirectory\n";
+		bool isCreateDir = safeCreateDirectory("innertest-safedir");
+		if (isCreateDir) cout << "\tcreated a directory.\n";
+		else cout << "\tfailed to create a new directory. already exists.\n";
+		
+		// test func safeCreateFile
+		cout << "\n## Test func safeCreateFile\n";
+		string fNew = "./innertest-NewFile.txt";
+		for (int i=0; i < 3; i++) {
+			if (!safeCreateFile(fNew)) cout << "failed to safe-create new file.\n";
+		}
 	}
 }
 

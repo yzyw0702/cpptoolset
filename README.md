@@ -2,9 +2,9 @@
 zero-prelim and file-independent tool kits for operations of string, path, memory, matrix, time, video, roi. in c++
 
 ## test hint
-> * on liniux-gcc: use command 
+> * on linux-gcc: use command 
 ```bash
-	g++ *.hpp testToolset.cpp -o test.o && ./test.o > report.out && vim report.out
+	rm -rf innertest* && g++ *.hpp testToolset.cpp -o innertest.o 2>innertest-error.txt && ./innertest.o > innertest-report.out && vim innertest-report.out
 ```
 
 > * on windows-msvs: load all .hpp and testToolset.cpp into visual studio 
@@ -19,18 +19,22 @@ zero-prelim and file-independent tool kits for operations of string, path, memor
 > * (`All Tested on both linux-gcc and windows-msvs`)
 
 > 1. StringTool: `split, rstrip, lstrip, replace`
-> 2. PathTool: `joinPath, getAbsPath, getFiles, getParentPath, getAllFiles, getFileName`, safeCreateFile, appendToFile, safeReadFile;
-> 3. MemoryTool: getMemorySize;
+> 2. PathTool: `joinPath, getAbsPath, getFiles, getParentPath, getAllFiles, getFileName, isFileExist, safeCreateDir`, safeCreateFile, safeAppendFile;
+> 3. MemoryTool: getTotalRAMSize;
 > 4. MatTool (OpenCV-based, yaml-format): readMat, writeMat;
-> 5. TimeTool (date and time): isValidTm, isValidDate, isValidDateTm, getAbsDate, getAbsTm, isDayOrNight, getCurrDateTm, getTmDiff, sortByDateTm;
+> 5. TimeTool (date and time): isValidTm, isValidDate, isValidDateTm, isDateSeriesContinuous, getAbsDate, getAbsTm, isDayOrNight, getCurrDateTm, getTmDiff, sortByDateTm;
 > 6. VideoTool: readVideoSeries, replayVideoSeries, setTmPtInVideoSeries, setVideoRange, setLengthScale;
 > 7. RoiTool: setRectRoi, detectRectRoi, readRectRoiSeries, writeRectRoiSeries;
 > 8. BgTool: getStaticBg, getDynamicBg, refreshDynamicBg;
 > 9. ChipTool: connectArduino, readArduino, writeArduino;
 > 10. WebTool: emailReport.
 
+## 20180928
+> 1. rename func isExist -> isFileExist in MPathTool.hpp;
+> 2. 
+
 ## 20180927
-> 1. add func getAllFiles in MPathTool.hpp;
+> 1. add func isExist, getAllFiles in MPathTool.hpp;
 > 2. fix bug in windows-version func getFiles in MPathTool.hpp;
 > 3. add func getParentPath, getFileName in MPathTool.hpp;
 
