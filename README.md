@@ -32,7 +32,8 @@ zero-prelim and file-independent tool kits for operations of string, path, memor
 
 ## 20180928
 > 1. rename func isExist -> isFileExist in MPathTool.hpp;
-> 2. 
+> 2. add func safeCreateDir, safeCreateFile, safeAppendFile in MPathTool.hpp;
+> 3. 
 
 ## 20180927
 > 1. add func isExist, getAllFiles in MPathTool.hpp;
