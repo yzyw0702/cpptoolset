@@ -1,6 +1,7 @@
 // testToolset.cpp
 #include "MStringTool.hpp"
 #include "MPathTool.hpp"
+#include "MSystemTool.hpp"
 
 
 int main() {
@@ -11,5 +12,8 @@ int main() {
 	// test path toolset
 	using namespace debug_toolpath;
 	//debug_path();
+	
+	using namespace debug_toolsystem;
+	debug_system();
 	return 0;
 }

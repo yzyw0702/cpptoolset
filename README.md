@@ -21,7 +21,7 @@ zero-prelim and file-independent tool kits for operations of string, path, memor
 
 > 1. StringTool: `split, rstrip, lstrip, replace`
 > 2. PathTool: `joinPath, getAbsPath, getFiles, getParentPath, getAllFiles, getFileName,` `isFileExist, safeCreateDir, safeCreateFile, safeAppendFile`;
-> 3. MemoryTool: getTotalRAMSize;
+> 3. SystemTool: (`Win-Version`, Linux-Version)`getRamSize, getRamUseRatio, getRamFreeRatio, getCpuNum, getCpuUseRatio`, getDiskSize, getDiskFreeRatio;
 > 4. MatTool (OpenCV-based, yaml-format): readMat, writeMat;
 > 5. TimeTool (date and time): isValidTm, isValidDate, isValidDateTm, isDateSeriesContinuous, getAbsDate, getAbsTm, isDayOrNight, getCurrDateTm, getTmDiff, sortByDateTm;
 > 6. VideoTool: readVideoSeries, replayVideoSeries, setTmPtInVideoSeries, setVideoRange, setLengthScale;
@@ -30,10 +30,13 @@ zero-prelim and file-independent tool kits for operations of string, path, memor
 > 9. ChipTool: connectArduino, readArduino, writeArduino;
 > 10. WebTool: emailReport.
 
+## 20181001
+> 1. Add MSystemTool.hpp;
+> 2. Add windows version of func getRamSize, getRamUseRatio, getRamFreeRatio, getCpuNum, getCpuUseRatio in MSystemTool.hpp.
+
 ## 20180928
 > 1. rename func isExist -> isFileExist in MPathTool.hpp;
 > 2. add func safeCreateDir, safeCreateFile, safeAppendFile in MPathTool.hpp;
-> 3. 
 
 ## 20180927
 > 1. add func isExist, getAllFiles in MPathTool.hpp;
