@@ -34,10 +34,12 @@ namespace toolsystem {
 			}
 			this->nMemTotal = getMemAttrbKb(this->fMemInfo, "MemTotal") / (1024 * 1024);
 			// Processor info
-			this->fCpuInfo = "/proc/cpuinfo"
+			this->fCpuInfo = "/proc/cpuinfo";
+			this->fCpuStat = "/proc/stat";
 			vector <string> lLines = getlines(this->fCpuInfo);
 			this->nCpu = 0;
 			for(int i=0; i < (int)lLines.size(); i++) {
+				if (lLines[i].size() < 1) continue;
 				if (isIncludedIn("processor", lLines[i])) this->nCpu ++;
 			}
 		#elif defined(_WIN32)
@@ -81,14 +83,15 @@ namespace toolsystem {
 			return -1;
 		}
 		
-		vector<int> getCpuStat(const string fCpuStat) {
-			vector<string> lInfo = getlines(fCpuStat);
+		vector<int> getCpuTm() {
+			vector<string> lInfo = getlines(this->fCpuStat);
 			vector<int> lVal;
-			vector<string> cpuinfo = toolstring::split(lInfo[0], ' ');
-			for (int i=0; i < (int)cpuinfo.size(); i++) {
-				if (i == 0 || cpuinfo[i].size() < 1) continue;
-				
+			vector<string> cpustat = toolstring::split(lInfo[0], ' ');
+			for (int i=0; i < (int)cpustat.size(); i++) {
+				if (i == 0 || cpustat[i].size() < 1) continue;
+				lVal.push_back(atoi(cpustat[i].c_str()));
 			}
+			return lVal;
 		}
 	
 	#elif defined(_WIN32)
@@ -118,7 +121,24 @@ namespace toolsystem {
 		int getCpuNum() {
 			return this->nCpu;
 		}
-
+	
+	#if defined(__linux__)
+		float getCpuUseRatio() {
+			vector<int> lTmBef = getCpuTm();
+			sleep(1);
+			vector<int> lTmAft = getCpuTm();
+			float totalDiff = 0, idlDiff = 0;
+			for(int i=0; i < (int)lTmBef.size(); i++) {
+				int diff = lTmAft[i] - lTmBef[i];
+				totalDiff += diff;
+				if (i == 3) { // the 4th value is idle time
+					idlDiff = diff;
+				}
+			}
+			return (totalDiff - idlDiff) / totalDiff;
+		}
+	
+	#elif defined(_WIN32)
 		float getCpuUseRatio() {
 			FILETIME tmIdlBef, tmIdlAft;
 			FILETIME tmKernBef, tmKernAft;
@@ -137,7 +157,9 @@ namespace toolsystem {
 			// float freeRatio = tmIdlDiff / (tmKernDiff + tmUsrDiff);
 			return diff;
 		}
-
+	
+	#endif
+	
 	#if defined(_WIN32)
 		float getDiskSize(string diskflag = "C:\\") {
 			int DType = GetDriveTypeA(diskflag.c_str());
@@ -172,13 +194,13 @@ namespace toolsystem {
 			if (isOk) return (float)bt2cFree / (float)btTotal;
 			else return 0;
 		}
-
 	#endif
 		
 	private:
 	#if defined(__linux__)
 		string fMemInfo;
 		string fCpuInfo;
+		string fCpuStat;
 	#elif defined(_WIN32)
 		MEMORYSTATUSEX* pStatex;
 		SYSTEM_INFO* pSysInfo;
@@ -202,7 +224,11 @@ namespace debug_toolsystem {
 		cout << "\tRAM info: Total " << nMemTotal << " GB, "
 			<< "Occupy " << nMemUseRatio * 100 << "%, "
 			<< "Free " << nMemFreeRatio * 100 << "%.\n";
+	#if defined(__linux__)
+		sleep(1);
+	#elif defined(_WIN32)
 		Sleep(1000);
+	#endif
 		/* test CPU info */
 		cout << "\n## Test CPU info functions\n";
 		cout << "\tCPU Num = " << sysinfo.getCpuNum()

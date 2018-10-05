@@ -2,6 +2,7 @@
 #include "MStringTool.hpp"
 #include "MPathTool.hpp"
 #include "MSystemTool.hpp"
+#include "MChipTool.hpp"
 
 
 int main() {
@@ -15,5 +16,8 @@ int main() {
 	
 	using namespace debug_toolsystem;
 	debug_system();
+	
+	using namespace debug_toolchip;
+	//debug_toolchip();
 	return 0;
 }

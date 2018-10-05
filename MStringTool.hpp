@@ -106,7 +106,7 @@ namespace toolstring {
 	
 	bool isIncludedIn(const string query, const string target) {
 		if (query.size() > target.size()) {
-			cout << "target string " << target.c_str() << " is too short.\n"; 
+			cout << "\t[toolstring::isIncludedIn()] target string \"" << target.c_str() << "\" is too short.\n"; 
 			return false;
 		}
 		for(int i=0; i < (int)(target.size() - query.size()); i++) {

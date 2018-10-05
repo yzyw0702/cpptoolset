@@ -22,13 +22,13 @@ simple-prelim and file-independent tool kits for operations of string, path, mem
 
 > 1. (Zero) StringTool: `split, rstrip, lstrip, replace`
 > 2. (Zero) PathTool: `joinPath, getAbsPath, getFiles, getParentPath, getAllFiles, getFileName,` `isFileExist, safeCreateDir, safeCreateFile, safeAppendFile`;
-> 3. (StringTool) SystemTool: (`Win-Version`, Linux-Version) `getRamSize, getRamUseRatio, getRamFreeRatio, getCpuNum, getCpuUseRatio, getDiskSize, getDiskFreeRatio`;
+> 3. (StringTool) SystemTool: `getRamSize, getRamUseRatio, getRamFreeRatio, getCpuNum, getCpuUseRatio, getDiskSize, getDiskFreeRatio`;
 > 4. MatTool (OpenCV-based, yaml-format): readMat, writeMat;
 > 5. TimeTool (date and time): isValidTm, isValidDate, isValidDateTm, isDateSeriesContinuous, getAbsDate, getAbsTm, isDayOrNight, getCurrDateTm, getTmDiff, sortByDateTm;
 > 6. VideoTool: readVideoSeries, replayVideoSeries, setTmPtInVideoSeries, setVideoRange, setLengthScale;
 > 7. RoiTool: setRectRoi, detectRectRoi, readRectRoiSeries, writeRectRoiSeries;
 > 8. BgTool: getStaticBg, getDynamicBg, refreshDynamicBg;
-> 9. ChipTool: (`Win-version`, Linux-version) `connectTo, receiveSignal, sendSignal`;
+> 9. (Zero) ChipTool: (`Win-version`, Linux-version) `connectTo, receiveSignal, sendSignal`;
 > 10. WebTool: emailReport.
 
 ## 20181005

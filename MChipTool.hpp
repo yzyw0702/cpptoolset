@@ -137,7 +137,8 @@ namespace toolchip {
 
 namespace debug_toolchip {
 	using namespace toolchip;
-	void test_chipwritedata(){
+	#if defined(_WIN32)
+	void debug_toolchip(){
 		//SerialChip ard("\\\\.\\COM5");
 		SerialChip ard(5);
 		if (!ard.isConnected) {
@@ -152,6 +153,7 @@ namespace debug_toolchip {
 		}
 
 	}
+	#endif
 }
 
 #endif // SERIALCLASS_H_INCLUDED
