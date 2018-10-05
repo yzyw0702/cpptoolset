@@ -31,6 +31,9 @@ simple-prelim and file-independent tool kits for operations of string, path, mem
 > 9. ChipTool: (`Win-version`, Linux-version) `connectTo, receiveSignal, sendSignal`;
 > 10. WebTool: emailReport.
 
+## 20181005
+> Add MChipTool.hpp
+
 ## 20181001
 > 1. Add MSystemTool.hpp;
 > 2. Add windows version of func getRamSize, getRamUseRatio, getRamFreeRatio, getCpuNum, getCpuUseRatio in MSystemTool.hpp.
