@@ -15,7 +15,7 @@ namespace toolstring {
 		}
 	}
 	
-	string replace(const string& src, char tgt = '\\', char rep = '/') {
+	string replace(const string src, char tgt = '\\', char rep = '/') {
 		string dst = src;
 		for (int i=0; i<(int)src.size(); i++) {
 			if (src[i] == tgt) {
@@ -29,7 +29,7 @@ namespace toolstring {
 		return replace(string(src), tgt, rep);
 	}
 
-	vector <string> split(const string& src, char delim = ' ') {
+	vector <string> split(const string src, char delim = ' ') {
 		int iL = 0, iR = 0;
 		vector <string> ret;
 		while (src[iL] == delim) {  // jump all delims at left space
@@ -47,7 +47,7 @@ namespace toolstring {
 		} return ret;
 	}
 	
-	string rstrip(string& src, char c = ' ') {
+	string rstrip(const string src, char c = ' ') {
 		int n = src.size();
 		string dst;
 		while (src[n - 1] == c && n > 0) n--;
@@ -55,7 +55,7 @@ namespace toolstring {
 		return dst;
 	}
 
-	string lstrip(string& src, char c = ' ') {
+	string lstrip(const string src, char c = ' ') {
 		int n = 0;
 		int N = src.size();
 		string dst;
@@ -64,7 +64,7 @@ namespace toolstring {
 		return dst;
 	}
 	
-	string rstrip(string src, string lpatterns) {
+	string rstrip(const string src, const string lpatterns) {
 	bool isFinish = false;
 	char suffix;
 	int iLast = (int)src.size();
@@ -84,7 +84,7 @@ namespace toolstring {
 	return src.substr(0, iLast);
 	}
 
-	string lstrip(string src, string lpatterns) {
+	string lstrip(const string src, const string lpatterns) {
 		bool isFinish = false;
 		char prefix;
 		int iFirst = 0;
@@ -102,6 +102,17 @@ namespace toolstring {
 				isFinish = true;
 		}
 		return src.substr(iFirst, src.size());
+	}
+	
+	bool isIncludedIn(const string query, const string target) {
+		if (query.size() > target.size()) {
+			cout << "target string " << target.c_str() << " is too short.\n"; 
+			return false;
+		}
+		for(int i=0; i < (int)(target.size() - query.size()); i++) {
+			if (query == target.substr(i, query.size())) return true;
+		}
+		return false;
 	}
 
 };

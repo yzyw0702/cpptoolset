@@ -353,6 +353,16 @@ namespace toolpath {
 		}
 	}
 
+	vector <string> getlines(const string path) {
+		vector <string> lLines;
+		string line;
+		fstream ifs(path.c_str(), ios::in);
+		while(getline(ifs, line)) {
+			lLines.push_back(line);
+		}
+		ifs.close();
+		return lLines;
+	}
 }
 
 namespace debug_toolpath {

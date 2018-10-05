@@ -1,5 +1,5 @@
 # cpptoolset
-zero-prelim and file-independent tool kits for operations of string, path, memory, matrix, time, video, roi. in c++
+simple-prelim and file-independent tool kits for operations of string, path, memory / cpu / disk info, matrix, date / time, video, roi. in c++
 
 ## test hint
 > * on linux-gcc: use command 
@@ -18,16 +18,17 @@ zero-prelim and file-independent tool kits for operations of string, path, memor
 ## aims
 > * (`Finished entries are highlighted.`)
 > * (`All Tested on both linux-gcc and windows-msvs`)
+> * (`prelim are labeled at the begining of each line`)
 
-> 1. StringTool: `split, rstrip, lstrip, replace`
-> 2. PathTool: `joinPath, getAbsPath, getFiles, getParentPath, getAllFiles, getFileName,` `isFileExist, safeCreateDir, safeCreateFile, safeAppendFile`;
-> 3. SystemTool: (`Win-Version`, Linux-Version)`getRamSize, getRamUseRatio, getRamFreeRatio, getCpuNum, getCpuUseRatio`, getDiskSize, getDiskFreeRatio;
+> 1. (Zero) StringTool: `split, rstrip, lstrip, replace`
+> 2. (Zero) PathTool: `joinPath, getAbsPath, getFiles, getParentPath, getAllFiles, getFileName,` `isFileExist, safeCreateDir, safeCreateFile, safeAppendFile`;
+> 3. (StringTool) SystemTool: (`Win-Version`, Linux-Version) `getRamSize, getRamUseRatio, getRamFreeRatio, getCpuNum, getCpuUseRatio, getDiskSize, getDiskFreeRatio`;
 > 4. MatTool (OpenCV-based, yaml-format): readMat, writeMat;
 > 5. TimeTool (date and time): isValidTm, isValidDate, isValidDateTm, isDateSeriesContinuous, getAbsDate, getAbsTm, isDayOrNight, getCurrDateTm, getTmDiff, sortByDateTm;
 > 6. VideoTool: readVideoSeries, replayVideoSeries, setTmPtInVideoSeries, setVideoRange, setLengthScale;
 > 7. RoiTool: setRectRoi, detectRectRoi, readRectRoiSeries, writeRectRoiSeries;
 > 8. BgTool: getStaticBg, getDynamicBg, refreshDynamicBg;
-> 9. ChipTool: connectArduino, readArduino, writeArduino;
+> 9. ChipTool: (`Win-version`, Linux-version) `connectTo, receiveSignal, sendSignal`;
 > 10. WebTool: emailReport.
 
 ## 20181001
