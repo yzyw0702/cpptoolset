@@ -4,11 +4,12 @@
 #if defined(__linux__)
 	#include <fstream>
 	#include <stdlib.h>
+	#include <sys/statvfs.h>
 	#include "MStringTool.hpp"
 	#include "MPathTool.hpp"
 	using namespace toolstring;
 	using namespace toolpath;
-
+	
 #elif defined(_WIN32)
 	#include <windows.h>
 	#include <direct.h>
@@ -17,7 +18,7 @@
 #include <iostream>
 #include <stdio.h>
 using namespace std;
-
+#define UNIT_GB (1024 * 1024 * 1024)
 
 #ifndef _MSYSTEMTOOL_HPP_
 #define _MSYSTEMTOOL_HPP_
@@ -61,9 +62,8 @@ namespace toolsystem {
 			this->nMemFree = getMemAttrbKb(this->fMemInfo, "MemFree") / (1024 * 1024);
 		#elif defined(_WIN32)
 			GlobalMemoryStatusEx(this->pStatex);
-			float unitGb = 1024 * 1024 * 1024;
-			this->nMemTotal = (float)this->pStatex->ullTotalPhys / unitGb;
-			this->nMemFree = (float)this->pStatex->ullAvailPhys / unitGb;
+			this->nMemTotal = (float)this->pStatex->ullTotalPhys / UNIT_GB;
+			this->nMemFree = (float)this->pStatex->ullAvailPhys / UNIT_GB;
 		#endif
 		}
 	
@@ -160,7 +160,24 @@ namespace toolsystem {
 	
 	#endif
 	
-	#if defined(_WIN32)
+	#if defined(__linux__)
+		float getDiskSize(string rootpath = "/home") {
+			struct statvfs vfs;
+			int error = statvfs(rootpath.c_str(), &vfs);
+			fsblkcnt_t volTotal = vfs.f_blocks;
+			fsblkcnt_t volUnit = vfs.f_bsize;
+			return (float)volTotal * (float)volUnit / UNIT_GB;
+		}
+		
+		float getDiskFreeRatio(string rootpath) {
+			struct statvfs vfs;
+			int error = statvfs(rootpath.c_str(), &vfs);
+			fsblkcnt_t volFree = vfs.f_bfree;
+			fsblkcnt_t volTotal = vfs.f_blocks;
+			return (float)volFree / (float)volTotal;
+		}
+	
+	#elif defined(_WIN32)
 		float getDiskSize(string diskflag = "C:\\") {
 			int DType = GetDriveTypeA(diskflag.c_str());
 			if (DType == DRIVE_CDROM || DType == DRIVE_UNKNOWN) {
@@ -174,7 +191,7 @@ namespace toolsystem {
 				(PULARGE_INTEGER)&btTotal,
 				(PULARGE_INTEGER)&btFree
 			);
-			if (isOk) return (float)btTotal / (float)(1024 * 1024 * 1024);
+			if (isOk) return (float)btTotal / (float)UNIT_GB;
 			else return -1;
 		}
 
@@ -234,13 +251,17 @@ namespace debug_toolsystem {
 		cout << "\tCPU Num = " << sysinfo.getCpuNum()
 			<< ", CPU usage = " << sysinfo.getCpuUseRatio() * 100 << "%\n";
 		/* test disk info */
-		//cout << "\n## Test disk info functions\n";
-		//char currdir[255];
-		//getcwd(currdir, 255);
-		//string cwd = currdir;
-		//string diskflag = cwd.substr(0, 3); // demo: "d:\\"
-		//cout << "\tDisk " << diskflag.c_str() << " total = " << sysinfo.getDiskSize(diskflag) << " GB, "
-			//<< "free = " << sysinfo.getDiskFreeRatio(diskflag) * 100 << "%\n";
+		cout << "\n## Test disk info functions\n";
+	#if defined(__linux__)
+		string diskflag = "/home";
+	#elif defined(_WIN32)
+		char currdir[255];
+		getcwd(currdir, 255);
+		string cwd = currdir;
+		string diskflag = cwd.substr(0, 3); // demo: "d:\\"
+	#endif
+		cout << "\tDisk " << diskflag.c_str() << " total = " << sysinfo.getDiskSize(diskflag) << " GB, "
+			<< "free = " << sysinfo.getDiskFreeRatio(diskflag) * 100 << "%\n";
 
 	}
 }

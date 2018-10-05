@@ -15,7 +15,7 @@ int main() {
 	//debug_path();
 	
 	using namespace debug_toolsystem;
-	debug_system();
+	//debug_system();
 	
 	using namespace debug_toolchip;
 	//debug_toolchip();
