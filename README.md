@@ -36,7 +36,8 @@ simple-prelim and file-independent tool kits for operations of string, path, mem
 > 10. WebTool: emailReport.
 
 ## 20181005
-> Add MChipTool.hpp
+> 1. Add Win-version of MChipTool.hpp;
+> 2. Complete Linux-version of MSystemTool.hpp
 
 ## 20181001
 > 1. Add MSystemTool.hpp;
