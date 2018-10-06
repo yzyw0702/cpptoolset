@@ -11,7 +11,7 @@ using namespace std;
 namespace toolstring {
 	void printStringList(const vector <string>& v) {
 		for (size_t i = 0; i < v.size(); i++) {
-			cout << "[" << i << "] = " << v[i] << endl;
+			cout << "\t[" << i << "] = " << v[i] << endl;
 		}
 	}
 	

@@ -22,13 +22,13 @@ simple-prelim and file-independent tool kits for operations of string, path, mem
 > * (require standard debug function protocols, including alert and try-catch sentences)
 > * (readible API)
 > * (comprehensive tutorial)
-> * (require cite protocol on github, e.g., MIT license, BSD etc.)
+> * (`require cite protocol on github, e.g., MIT license, BSD etc.`)
 
 > 1. (Zero) StringTool: `split, rstrip, lstrip, replace`
 > 2. (Zero) PathTool: `joinPath, getAbsPath, getFiles, getParentPath, getAllFiles, getFileName,` `isFileExist, safeCreateDir, safeCreateFile, safeAppendFile`;
 > 3. (1+2) SystemTool: `getRamSize, getRamUseRatio, getRamFreeRatio, getCpuNum, getCpuUseRatio, getDiskSize, getDiskFreeRatio`;
 > 4. (OpenCV+1+2) IOTool (.yaml, hdf5, etc.): readConfig, writeConfig, readMat, writeMat;
-> 5. (1+2) TimeTool (date and time): isValidTm, isValidDate, isValidDateTm, isDateSeriesContinuous, getAbsDate, getAbsTm, isDayOrNight, getCurrDateTm, getTmDiff, sortByDateTm;
+> 5. (1) TimeTool :`MDateTm, isValidTm, str2tm, operators < + += -, getTmStr, geFileTmRange, getErrTmPt`, isDayOrNight, getCurrDateTm,, sortByDateTm;
 > 6. VideoTool: readVideoSeries, replayVideoSeries, setTmPtInVideoSeries, setVideoRange, setLengthScale;
 > 7. RoiTool: setRectRoi, detectRectRoi, readRectRoiSeries, writeRectRoiSeries;
 > 8. BgTool: getStaticBg, getDynamicBg, refreshDynamicBg;

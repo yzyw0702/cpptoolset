@@ -3,6 +3,7 @@
 #include "MPathTool.hpp"
 #include "MSystemTool.hpp"
 #include "MChipTool.hpp"
+#include "MTimeTool.hpp"
 
 
 int main() {
@@ -19,5 +20,8 @@ int main() {
 	
 	using namespace debug_toolchip;
 	//debug_toolchip();
+	
+	using namespace debug_tooltime;
+	debug_time();
 	return 0;
 }
