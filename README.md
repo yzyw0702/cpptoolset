@@ -35,6 +35,9 @@ simple-prelim and file-independent tool kits for operations of string, path, mem
 > 9. (Zero) ChipTool: (`Win-version`, Linux-version) `connectTo, receiveSignal, sendSignal`;
 > 10. WebTool: emailReport.
 
+## 20181006
+> 1. Add MTimeTool.hpp and add func MDateTm, isValidTm, str2tm, operators < + += -, getTmStr, geFileTmRange, getErrTmPt;
+
 ## 20181005
 > 1. Add Win-version of MChipTool.hpp;
 > 2. Complete Linux-version of MSystemTool.hpp
