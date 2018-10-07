@@ -19,16 +19,17 @@ simple-prelim and file-independent tool kits for operations of string, path, mem
 > * (`Finished entries are highlighted.`)
 > * (`All Tested on both linux-gcc and windows-msvs`)
 > * (`prelim are labeled at the begining of each line`)
-> * (require standard debug function protocols, including alert and try-catch sentences)
+> * (`require cite protocol on github, e.g., MIT license, BSD etc.`)
+> * (require code annotation in details)
+> * (require standard debug function name, including alert and try-catch sentences)
 > * (readible API)
 > * (comprehensive tutorial)
-> * (`require cite protocol on github, e.g., MIT license, BSD etc.`)
 
 > 1. (Zero) StringTool: `split, rstrip, lstrip, replace`
 > 2. (Zero) PathTool: `joinPath, getAbsPath, getFiles, getParentPath, getAllFiles, getFileName,` `isFileExist, safeCreateDir, safeCreateFile, safeAppendFile`;
 > 3. (1+2) SystemTool: `getRamSize, getRamUseRatio, getRamFreeRatio, getCpuNum, getCpuUseRatio, getDiskSize, getDiskFreeRatio`;
 > 4. (OpenCV+1+2) IOTool (.yaml, hdf5, etc.): readConfig, writeConfig, readMat, writeMat;
-> 5. (1) TimeTool :`MDateTm, isValidTm, str2tm, operators < + += -, getTmStr, geFileTmRange, getErrTmPt`, isDayOrNight, getCurrDateTm,, sortByDateTm;
+> 5. (1) TimeTool :`MDateTm, isValidTm, str2tm, operators < + += -, getTmStr, getDate, getClock, MTmFile, init, fname2tmrg, getStartTm, getStopTm, getFileTmRange, getErrTmPt, getCtTime, getCurrDateTm`, sortByDateTm;
 > 6. VideoTool: readVideoSeries, replayVideoSeries, setTmPtInVideoSeries, setVideoRange, setLengthScale;
 > 7. RoiTool: setRectRoi, detectRectRoi, readRectRoiSeries, writeRectRoiSeries;
 > 8. BgTool: getStaticBg, getDynamicBg, refreshDynamicBg;

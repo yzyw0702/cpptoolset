@@ -12,7 +12,7 @@ using namespace std;
 namespace tooltime {
 	class MDateTime {
 	public: // interfaces
-			/* constructor */
+		/* constructor */
 		MDateTime(const string timestr) {
 			this->m_pTm = str2tm(timestr);
 			if (!this->isValidTm()) {
@@ -21,6 +21,14 @@ namespace tooltime {
 				this->m_sTm = "";
 			}
 			this->m_sTm = timestr;
+		}
+		
+		MDateTime(tm tmIn) {
+			this->m_pTm = new tm;
+			*this->m_pTm = tmIn;
+			char buff[64];
+			strftime(buff, sizeof(buff), "%Y-%m-%d-%H.%M.%S", this->m_pTm);
+			this->m_sTm = buff;
 		}
 
 		bool operator < (const MDateTime& other) {
@@ -36,9 +44,9 @@ namespace tooltime {
 			curr += nSec;
 			MDateTime* newDt = new MDateTime(this->m_sTm);
 			newDt->m_pTm = localtime(&curr);
-			char buf[64];
-			strftime(buf, sizeof(buf), "%Y-%m-%d-%H.%M.%S", newDt->m_pTm);
-			newDt->m_sTm = buf;
+			char buff[64];
+			strftime(buff, sizeof(buff), "%Y-%m-%d-%H.%M.%S", newDt->m_pTm);
+			newDt->m_sTm = buff;
 			return *newDt;
 		}
 
@@ -46,15 +54,26 @@ namespace tooltime {
 			time_t curr = mktime(this->m_pTm);
 			curr += nSec;
 			this->m_pTm = localtime(&curr);
-			char buf[64];
-			strftime(buf, sizeof(buf), "%Y-%m-%d-%H.%M.%S", this->m_pTm);
-			this->m_sTm = buf;
+			char buff[64];
+			strftime(buff, sizeof(buff), "%Y-%m-%d-%H.%M.%S", this->m_pTm);
+			this->m_sTm = buff;
 		}
 
 		double operator - (const MDateTime& other) {
 			return difftime(mktime(this->m_pTm), mktime(other.m_pTm));
 		}
 
+		string getDate() { // format: 2018-10-07
+			return this->m_sTm.substr(0, 10);
+		}
+		
+		double getClock() { // unit: sec
+			double sec = (double)this->m_pTm->tm_hour * 3600;
+			sec += (double)this->m_pTm->tm_min * 60;
+			sec += (double)this->m_pTm->tm_sec;
+			return sec;
+		}
+		
 	private: // internal operations
 		bool isValidTm() {
 			int yr = this->m_pTm->tm_year + 1900;
@@ -120,6 +139,14 @@ namespace tooltime {
 			lTm.push_back(this->m_pTmStop->getTmStr());
 			return lTm;
 		}
+		
+		MDateTime getStartTm() {
+			return *this->m_pTmStart;
+		}
+		
+		MDateTime getStopTm() {
+			return *this->m_pTmStop;
+		}
 
 	private:
 		void fname2tmrg() {
@@ -138,10 +165,12 @@ namespace tooltime {
 	public:
 		string m_fName;
 		string m_chName;
+	private:
 		MDateTime* m_pTmStart;
 		MDateTime* m_pTmStop;
 	};
 
+	/* find in-continuous point in a time series */
 	vector<int> getErrTmPt(vector<string>& lFTm, int thresh = 60) {
 		MTmFile curr, prev;
 		vector<int> lIdxErr;
@@ -151,16 +180,34 @@ namespace tooltime {
 				prev = curr;
 				continue;
 			}
-			double diff = *curr.m_pTmStart - *prev.m_pTmStop;
+			double diff = curr.getStartTm() - prev.getStopTm();
 			if ((diff > 0 && diff > thresh) || (diff < 0 && -diff > thresh)) {
 				lIdxErr.push_back(i - 1);
 			}
-				
 			prev = curr;
 		}
 		return lIdxErr; // no interrupt time point
 	}
+	
+	/* # get circadian time based on given light schedule */
+	// ##	<pZt>: MDateTime pointer, its str-format must be "2018-10-07-09.00.00"
+	// ##	<hrCtOn>: CT time when light on, unit = hr
+	// ##	<return>: CT time (hr), < 12 = day, > 12 = night
+	double getCtTime(MDateTime* pZt, double hrCtOn) {
+		double hrCt = pZt->getClock() / 3600 - hrCtOn;
+		return (hrCt < 0 ? (hrCt + 24) : hrCt);
+	}
 
+	MDateTime getCurrDateTm() {
+		time_t secCurr = time(NULL);
+		tm* pTmCurr = localtime(&secCurr);
+		return MDateTime(*pTmCurr);
+	}
+	
+	vector<string> sortByDateTm(vector<string>& lFTm) {
+		//TBD
+	}
+	
 } // end of namespace tooltime
 
 namespace debug_tooltime {
@@ -218,7 +265,26 @@ namespace debug_tooltime {
 					<< endl;
 			}
 		}
+		
+		/* test func getClock, getDate, getCtTime */
+		cout << "\n## Test func getClock, getDate, getCtTime\n";
+		string sTmCt16 = "2017-12-29-01.00.00";
+		string sTmCt0 = "2017-12-29-09.00.00";
+		string sTmCt12hf = "2017-12-29-21.15.00";
+		MDateTime dtCt16(sTmCt16), dtCt0(sTmCt0), dtCt12hf(sTmCt12hf);
+		double hrCtOn = 9.0;
+		cout << "\tDate = " << dtCt16.getDate() << endl;
+		double hrCt16 = getCtTime(&dtCt16, hrCtOn);
+		double hrCt0 = getCtTime(&dtCt0, hrCtOn);
+		double hrCt12hf = getCtTime(&dtCt12hf, hrCtOn);
+		cout << "\tTime " << sTmCt16 << " = CT" << hrCt16 << endl
+			 << "\tTime " << sTmCt0 << " = CT" << hrCt0 << endl
+			 << "\tTime " << sTmCt12hf << " = CT" << hrCt12hf << endl;
 
+		/* test MDateTime(tm) and func getCurrDateTm */
+		cout << "\n## Test MDateTime(tm) and func getCurrDateTm\n";
+		MDateTime dtCurr = getCurrDateTm();
+		cout << "\tCurrent date-time: " << dtCurr.getTmStr().c_str() << endl;
 	}
 }
 
