@@ -7,8 +7,6 @@
 	#include <sys/statvfs.h>
 	#include "MStringTool.hpp"
 	#include "MPathTool.hpp"
-	using namespace toolstring;
-	using namespace toolpath;
 	
 #elif defined(_WIN32)
 	#include <windows.h>
@@ -18,30 +16,30 @@
 #include <iostream>
 #include <stdio.h>
 using namespace std;
-#define UNIT_GB (1024 * 1024 * 1024)
 
 #ifndef _MSYSTEMTOOL_HPP_
 #define _MSYSTEMTOOL_HPP_
 namespace toolsystem {
+#define UNIT_GB (1024 * 1024 * 1024)
 	class MSystemInfo {
 	public:
 		MSystemInfo() {
 		#if defined(__linux__)
 			// Memory info
 			this->fMemInfo = "/proc/meminfo";
-			if (!isFileExist(this->fMemInfo)) {
+			if (!toolpath::isFileExist(this->fMemInfo)) {
 				cout << "memory information file " << this->fMemInfo << " is missing.\n";
 				return;
 			}
-			this->nMemTotal = getMemAttrbKb(this->fMemInfo, "MemTotal") / (1024 * 1024);
+			this->nMemTotal = this->getMemAttrbKb(this->fMemInfo, "MemTotal") / (1024 * 1024);
 			// Processor info
 			this->fCpuInfo = "/proc/cpuinfo";
 			this->fCpuStat = "/proc/stat";
-			vector <string> lLines = getlines(this->fCpuInfo);
+			vector <string> lLines = toolpath::getlines(this->fCpuInfo);
 			this->nCpu = 0;
 			for(int i=0; i < (int)lLines.size(); i++) {
 				if (lLines[i].size() < 1) continue;
-				if (isIncludedIn("processor", lLines[i])) this->nCpu ++;
+				if (toolstring::isIncludedIn("processor", lLines[i])) this->nCpu ++;
 			}
 		#elif defined(_WIN32)
 			// Memory info
@@ -59,7 +57,7 @@ namespace toolsystem {
 		void update() {
 			// Memory info
 		#if defined(__linux__)
-			this->nMemFree = getMemAttrbKb(this->fMemInfo, "MemFree") / (1024 * 1024);
+			this->nMemFree = this->getMemAttrbKb(this->fMemInfo, "MemFree") / (1024 * 1024);
 		#elif defined(_WIN32)
 			GlobalMemoryStatusEx(this->pStatex);
 			this->nMemTotal = (float)this->pStatex->ullTotalPhys / UNIT_GB;
@@ -69,12 +67,12 @@ namespace toolsystem {
 	
 	#if defined(__linux__)
 		float getMemAttrbKb(const string fMemInfo, const string sAttrb) {
-			vector<string> lInfo = getlines(fMemInfo);
+			vector<string> lInfo = toolpath::getlines(fMemInfo);
 			int val = -1;
 			for (int i=0; i< (int)lInfo.size(); i++) {
-				if (isIncludedIn(sAttrb, lInfo[i])) {
+				if (toolstring::isIncludedIn(sAttrb, lInfo[i])) {
 					vector <string> lTerms = toolstring::split(lInfo[i], ':');
-					string term = rstrip(lstrip(lTerms[1], ' '), " kB\r\n");
+					string term = toolstring::rstrip(toolstring::lstrip(lTerms[1], ' '), " kB\r\n");
 					val = atoi(term.c_str());
 					return (float)val;
 				}
@@ -84,7 +82,7 @@ namespace toolsystem {
 		}
 		
 		vector<int> getCpuTm() {
-			vector<string> lInfo = getlines(this->fCpuStat);
+			vector<string> lInfo = toolpath::getlines(this->fCpuStat);
 			vector<int> lVal;
 			vector<string> cpustat = toolstring::split(lInfo[0], ' ');
 			for (int i=0; i < (int)cpustat.size(); i++) {
@@ -124,9 +122,9 @@ namespace toolsystem {
 	
 	#if defined(__linux__)
 		float getCpuUseRatio() {
-			vector<int> lTmBef = getCpuTm();
+			vector<int> lTmBef = this->getCpuTm();
 			sleep(1);
-			vector<int> lTmAft = getCpuTm();
+			vector<int> lTmAft = this->getCpuTm();
 			float totalDiff = 0, idlDiff = 0;
 			for(int i=0; i < (int)lTmBef.size(); i++) {
 				int diff = lTmAft[i] - lTmBef[i];
@@ -232,6 +230,7 @@ namespace toolsystem {
 namespace debug_toolsystem {
 	void debug_system() {
 		using namespace toolsystem;
+		cout << "# ---- MSystemTool ----\n";
 		/* test RAM info */
 		cout << "\n## Test RAM info functions\n";
 		MSystemInfo sysinfo;

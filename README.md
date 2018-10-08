@@ -20,21 +20,43 @@ simple-prelim and file-independent tool kits for operations of string, path, mem
 > * (`All Tested on both linux-gcc and windows-msvs`)
 > * (`prelim are labeled at the begining of each line`)
 > * (`require cite protocol on github, e.g., MIT license, BSD etc.`)
-> * (require code annotation in details)
+> * (`only use field operator :: to call functions of this toolset`)
+> * (require code annotation in details, and in the following format)
+``` cpp
+	// initialization
+	/// <summary>
+	/// init data manager
+	/// </summary>
+	/// <param name="pManData"> data manager pointer </param>
+	/// <return> false=failed, true=success </return>
+	bool init_with(
+		int cps = 1
+		)
+```
 > * (require standard debug function name, including alert and try-catch sentences)
 > * (readible API)
 > * (comprehensive tutorial)
 
-> 1. (Zero) StringTool: `split, rstrip, lstrip, replace`
-> 2. (Zero) PathTool: `joinPath, getAbsPath, getFiles, getParentPath, getAllFiles, getFileName,` `isFileExist, safeCreateDir, safeCreateFile, safeAppendFile`;
+> 1. (Zero) StringTool: `split, rstrip, lstrip, replace, printStringList, isIncludedIn, isInList`;
+> 2. (1) PathTool: `joinPath, getAbsPath, getFiles, getParentPath, getAllFiles, getFileName,` `isFileExist, safeCreateDir, safeCreateFile, safeAppendFile`;
 > 3. (1+2) SystemTool: `getRamSize, getRamUseRatio, getRamFreeRatio, getCpuNum, getCpuUseRatio, getDiskSize, getDiskFreeRatio`;
 > 4. (OpenCV+1+2) IOTool (.yaml, hdf5, etc.): readConfig, writeConfig, readMat, writeMat;
-> 5. (1) TimeTool :`MDateTm, isValidTm, str2tm, operators < + += -, getTmStr, getDate, getClock, MTmFile, init, fname2tmrg, getStartTm, getStopTm, getFileTmRange, getErrTmPt, getCtTime, getCurrDateTm`, sortByDateTm;
-> 6. VideoTool: readVideoSeries, replayVideoSeries, setTmPtInVideoSeries, setVideoRange, setLengthScale;
+> 5. (1) TimeTool :`MDateTm, isValidTm, str2tm, operators < + += -, getTmStr, getDate, getClock, MTmFile, init, fname2tmrg, getStartTm, getStopTm, getFileTmRange, getErrTmPt, getCtTime, getCurrDateTm, sortByDateTm`;
+> 6. (OpenCV+1+2+3+4+5) VideoTool: createFromSingleVideo, createFromVideoSeries, replayVideo, setTmPtInVideo, setVideoRange, setLengthScale;
 > 7. RoiTool: setRectRoi, detectRectRoi, readRectRoiSeries, writeRectRoiSeries;
 > 8. BgTool: getStaticBg, getDynamicBg, refreshDynamicBg;
 > 9. (Zero) ChipTool: (`Win-version`, Linux-version) `connectTo, receiveSignal, sendSignal`;
 > 10. WebTool: emailReport.
+
+## 20181008
+> 1. complete MTimeTool.hpp;
+> 2. stop abuse of 'using namespace toolxx', add field operators instead;
+> 3. add func (abstracted template) isInList in MStringTool.hpp;
+> 4. setup and test opencv environment, both in win32 and ubuntu;
+> 5. generate MVideoTool.hpp file.
+
+## 20181007
+> 1. update MTimeTool.hpp
 
 ## 20181006
 > 1. Add MTimeTool.hpp and add func MDateTm, isValidTm, str2tm, operators < + += -, getTmStr, geFileTmRange, getErrTmPt;

@@ -115,12 +115,21 @@ namespace toolstring {
 		return false;
 	}
 
+	template <class T>
+	int isInList(vector<T>& list, T query) {
+		if (list.size() == 0) return -1;
+		for (int i = 0; i < (int)list.size(); i++)
+			if (query == list[i]) return i;
+		return -1;
+	}
+
 };
 
 namespace debug_toolstring {
-	using namespace toolstring;
 
 	void debug_split() {
+		using namespace toolstring;
+		cout << "# ---- MStringTool ----\n";
 		string s1 = "This is a string list.";
 		string s2 = "This is another string list with some bug. ";
 		string s3 = " There is a space at first position.";

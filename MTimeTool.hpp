@@ -4,6 +4,7 @@
 #include <iostream>
 #include <time.h>
 #include <stdlib.h>
+#include <algorithm>
 #include "MStringTool.hpp"
 using namespace std;
 #ifndef _MTIMETOOL_HPP_
@@ -204,8 +205,15 @@ namespace tooltime {
 		return MDateTime(*pTmCurr);
 	}
 	
-	vector<string> sortByDateTm(vector<string>& lFTm) {
-		//TBD
+	bool cmpTmFile(const string& a, const string& b) {
+		MTmFile tmfA(a), tmfB(b);
+		MDateTime startA = tmfA.getStartTm();
+		MDateTime startB = tmfB.getStartTm();
+		return startA < startB;
+	}
+	
+	void sortByDateTm(vector<string>& lFTm) {
+		std::sort(lFTm.begin(), lFTm.end(), cmpTmFile);
 	}
 	
 } // end of namespace tooltime
@@ -285,6 +293,34 @@ namespace debug_tooltime {
 		cout << "\n## Test MDateTime(tm) and func getCurrDateTm\n";
 		MDateTime dtCurr = getCurrDateTm();
 		cout << "\tCurrent date-time: " << dtCurr.getTmStr().c_str() << endl;
+		
+		/* test func cmpTmFile, sortByDateTm */
+		cout << "\n## Test func cmpTmFile, sortByDateTm\n";
+		string ulStr[] = {
+			"004-2018-09-26-14.00.00-16.00.00.avi",
+			"004-2018-09-26-16.00.00-18.00.00.avi",
+			"004-2018-09-27-00.00.00-02.00.00.avi",
+			"004-2018-09-27-06.00.00-08.00.00.avi",
+			"004-2018-09-27-08.00.00-10.00.00.avi",
+			"004-2018-09-26-08.46.48-10.00.00.avi",
+			"004-2018-09-26-10.00.00-12.00.00.avi",
+			"004-2018-09-26-12.00.00-14.00.00.avi",
+			"004-2018-09-27-02.00.00-04.00.00.avi",
+			"004-2018-09-27-04.00.00-06.00.00.avi",
+			"004-2018-09-26-18.00.00-20.00.00.avi",
+			"004-2018-09-26-20.00.00-22.00.00.avi",
+			"004-2018-09-26-22.00.00-00.00.00.avi",
+			"004-2018-09-27-10.00.00-12.00.00.avi",
+			"004-2018-09-27-12.00.00-13.40.19.avi"
+		};
+		vector<string> ulFTm;
+		for (int i=0; i < 15; i++)
+			ulFTm.push_back(ulStr[i]);
+		cout << "\t### before sorting:\n";
+		toolstring::printStringList(ulFTm);
+		sortByDateTm(ulFTm);
+		cout << "\n\t### after sorting:\n";
+		toolstring::printStringList(ulFTm);
 	}
 }
 

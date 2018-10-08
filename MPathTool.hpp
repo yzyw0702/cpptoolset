@@ -15,49 +15,13 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include "MStringTool.hpp"
 using namespace std;
 #ifndef _MPATHTOOL_HPP_
 #define _MPATHTOOL_HPP_
 
 namespace toolpath {
 
-	/* --- cite from MStringTool.hpp */
-	vector <string> split(const string& src, char delim = ' ') {
-		int iL = 0, iR = 0;
-		vector <string> ret;
-		while (src[iL] == delim) {  // jump all delims at left space
-			iL++;
-		}
-		for (int i = iL; i < (int)src.size(); i++) {  // traverse all char
-			if (src[i] == delim) {  // delim found
-				iR = i;  // set right marker
-				ret.push_back(src.substr(iL, iR - iL));  // split current word
-				iL = i + 1;  // set left marker to current position
-			}
-		}
-		if (src[src.size() - 1] != delim) {  // add last one if it's not a delim
-			ret.push_back(src.substr(iL, src.size() - iL));
-		} return ret;
-	}
-
-	void printStringList(const vector <string>& v) {
-		for (size_t i = 0; i < v.size(); i++) {
-			cout << "[" << i << "] = " << v[i].c_str() << endl;
-		}
-	}
-
-	string replace(const string& src, char tgt = '\\', char rep = '/') {
-		string dst = src;
-		for (int i = 0; i<(int)src.size(); i++) {
-			if (src[i] == tgt) {
-				dst[i] = rep;
-			}
-		}
-		return dst;
-	}
-
-	/* --- cite end */
-	
 	string joinPath(string prefix, string suffix) {
 		char delim = '/';
 		string sep = "";
@@ -92,7 +56,7 @@ namespace toolpath {
 				isMatch = false;
 			}
 			else if (pattern.find("*") != string::npos) {
-				vector <string> lWords = split(pattern, '*');
+				vector <string> lWords = toolstring::split(pattern, '*');
 				for (int i = 0; i< (int)lWords.size(); i++) {
 					size_t iFind;
 					if (i == 0 && lWords[i][0] == '^') {
@@ -147,7 +111,7 @@ namespace toolpath {
 				isMatch = false;
 			}
 			else if (pattern.find("*") != string::npos) {
-				vector <string> lWords = split(pattern, '*');
+				vector <string> lWords = toolstring::split(pattern, '*');
 				for (int i = 0; i< (int)lWords.size(); i++) {
 					size_t iFind;
 					if (i == 0 && lWords[i][0] == '^') {
@@ -190,12 +154,12 @@ namespace toolpath {
 	string getAbsPath(const string path) {
 		string respath;
 	#if defined(__linux__)
-		respath = replace(path, '\\', '/');
+		respath = toolstring::replace(path, '\\', '/');
 		if (respath[0] == '/') {
 			return respath;
 		}
 	#elif defined(_WIN32)
-		respath = replace(path, '/', '\\');
+		respath = toolstring::replace(path, '/', '\\');
 		if (respath.substr(1, 2) == ":\\") {
 			return respath;
 		}
@@ -235,7 +199,7 @@ namespace toolpath {
 	#elif defined(_WIN32)
 		delim = '\\';
 	#endif
-		vector <string> lTerms = split(path, delim);
+		vector <string> lTerms = toolstring::split(path, delim);
 		return lTerms[lTerms.size()-1];
 	}
 
@@ -384,7 +348,7 @@ namespace debug_toolpath {
 		for (int i = 0; i < (int)lpp.size(); i++) {
 			lPathpp.push_back(rootdir + lpp[i]);
 		}
-		printStringList(lPathpp);
+		toolstring::printStringList(lPathpp);
 		
 		// test func getAbsPath
 		cout << "\n## Test func getAbsPath\n";
@@ -395,7 +359,7 @@ namespace debug_toolpath {
 		// test func isFileOrDirectory
 		cout << "\n## Test func isFileOrDirectory\n";
 		vector <string> lPaths = getFiles(".", "*");
-		printStringList(lPaths);
+		toolstring::printStringList(lPaths);
 		for (int i = 0; i< (int)lPaths.size(); i++) {
 			string absPath = getAbsPath(lPaths[i]);
 			if (!isFileExist(absPath)) {
@@ -417,7 +381,7 @@ namespace debug_toolpath {
 		// test func getAllFiles
 		cout << "\n## Test func getAllFiles\n";
 		vector <string> lAllPaths = getAllFiles(".", "*e$");
-		printStringList(lAllPaths);
+		toolstring::printStringList(lAllPaths);
 		
 		// test func safeCreateDirectory
 		cout << "\n## Test func safeCreateDirectory\n";

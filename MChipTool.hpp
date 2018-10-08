@@ -136,9 +136,16 @@ namespace toolchip {
 }
 
 namespace debug_toolchip {
-	using namespace toolchip;
-	#if defined(_WIN32)
-	void debug_toolchip(){
+#if defined(__linux__)
+	void debug_chip() {
+		using namespace toolchip;
+		cout << "# ---- MChipTool ----\n";
+		cout << "\tTBD.\n";
+	}
+#elif defined(_WIN32)
+	void debug_chip(){
+		using namespace toolchip;
+		cout << "# ---- MChipTool ----\n";
 		//SerialChip ard("\\\\.\\COM5");
 		SerialChip ard(5);
 		if (!ard.isConnected) {
@@ -153,7 +160,7 @@ namespace debug_toolchip {
 		}
 
 	}
-	#endif
+#endif
 }
 
 #endif // SERIALCLASS_H_INCLUDED
