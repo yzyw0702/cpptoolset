@@ -4,7 +4,7 @@ simple-prelim and file-independent tool kits for operations of string, path, mem
 ## test hint
 > * on linux-gcc: use command 
 ```bash
-	rm -rf innertest* && g++ *.hpp testToolset.cpp -o innertest.o 2>innertest-error.txt && ./innertest.o > innertest-report.out && vim innertest-report.out
+	rm -rf innertest* && g++  *.hpp testToolset.cpp `pkg-config --libs --cflags opencv` -o innertest.o 2>innertest-error.txt && ./innertest.o > innertest-report.out && vim innertest-report.out
 	rm -rf innertest*
 ```
 
@@ -42,7 +42,7 @@ simple-prelim and file-independent tool kits for operations of string, path, mem
 > 3. (1+2) SystemTool: `getRamSize, getRamUseRatio, getRamFreeRatio, getCpuNum, getCpuUseRatio, getDiskSize, getDiskFreeRatio`;
 > 4. (OpenCV+1+2) IOTool (.yaml, hdf5, etc.): readConfig, writeConfig, readMat, writeMat;
 > 5. (1) TimeTool :`MDateTm, isValidTm, str2tm, operators < + += -, getTmStr, getDate, getClock, MTmFile, init, fname2tmrg, getStartTm, getStopTm, getFileTmRange, getErrTmPt, getCtTime, getCurrDateTm, sortByDateTm`;
-> 6. (OpenCV+1+2+3+4+5) VideoTool: createFromSingleVideo, createFromVideoSeries, replayVideo, setTmPtInVideo, setVideoRange, setLengthScale;
+> 6. (OpenCV+1+2+3+4+5) VideoTool: `createFromSingleVideo, createFromVideoSeries`, replayVideo, setTmPtInVideo, setVideoRange, setLengthScale;
 > 7. RoiTool: setRectRoi, detectRectRoi, readRectRoiSeries, writeRectRoiSeries;
 > 8. BgTool: getStaticBg, getDynamicBg, refreshDynamicBg;
 > 9. (Zero) ChipTool: (`Win-version`, Linux-version) `connectTo, receiveSignal, sendSignal`;
