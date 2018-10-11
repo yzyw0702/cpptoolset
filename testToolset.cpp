@@ -1,9 +1,9 @@
 // testToolset.cpp
 #include "MStringTool.hpp"
 #include "MPathTool.hpp"
-//#include "MSystemTool.hpp"
-//#include "MChipTool.hpp"
-//#include "MTimeTool.hpp"
+#include "MSystemTool.hpp"
+#include "MChipTool.hpp"
+#include "MTimeTool.hpp"
 #include "MVideoTool.hpp"
 
 int main() {
@@ -15,8 +15,8 @@ int main() {
 	//using namespace debug_toolpath;
 	//debug_path();
 	
-	//using namespace debug_toolsystem;
-	//debug_system();
+	using namespace debug_toolsystem;
+	debug_system();
 	
 	//using namespace debug_toolchip;
 	//debug_chip();

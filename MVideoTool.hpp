@@ -11,6 +11,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include "MSystemTool.hpp"
 using namespace std;
 using namespace cv;
 
@@ -32,6 +33,12 @@ namespace toolvideo {
 				init_default();
 				initRootPath(rootPath.c_str());
 				init_with(cps);
+			}
+			
+			MVideoSrc(const string rootPath, const string fVideo, int cps) {
+				init_default();
+				initRootPath(rootPath);
+				init_with(fVideo, cps);
 			}
 
 			/* destructor */
@@ -61,21 +68,13 @@ namespace toolvideo {
 			/// </summary>
 			/// <param name="pManData"> data manager pointer </param>
 			/// <return> false=failed, true=success </return>
-			bool init_with(
-				int cps = 1
-			) {
+			bool init_with(int cps = 1, int isContinueFromLast = 0) {
 				_cTtFr = 0;
 				string fListOfClips = data_rootPath + string("list.txt");
 				appendVideoSeries(fListOfClips); // load video series
 				_pClip = new VideoCapture; // get initial video
-				int isContinueFromLast = 0;//discuss which time point to start
-										   //cout<<"Do you want to continue from last tracing progress?\n"
-										   //	<<"[0=no, 1=yes] Your answer = ";
-										   //cin>>isContinueFromLast;
-				if (isContinueFromLast)
-					initFromLatest();
-				else
-					initFromDeNovo();
+				if (isContinueFromLast) initFromLatest();
+				else initFromDeNovo();
 				_cClips = (int)_VNameClips.size();//get video info
 				_cFrIC = (int)_pClip->get(CV_CAP_PROP_FRAME_COUNT);
 				_fps = (int)_pClip->get(CV_CAP_PROP_FPS);
@@ -95,6 +94,34 @@ namespace toolvideo {
 				} return true;
 			}
 
+			bool init_with(const string fVideo, int cps, int isContinueFromLast = 0){
+				if (!toolpath::isFileExist(fVideo) || !toolpath::isFileOrDirectory(fVideo)) {
+					cout << fVideo.c_str() << " is invalid.\n";
+					return false;
+				}
+				appendClip(fVideo);
+				_pClip = new VideoCapture; // get initial video
+				if (isContinueFromLast) initFromLatest();
+				else initFromDeNovo();
+				_cClips = (int)_VNameClips.size();//get video info
+				_cFrIC = (int)_pClip->get(CV_CAP_PROP_FRAME_COUNT);
+				_fps = (int)_pClip->get(CV_CAP_PROP_FPS);
+				if (isContinueFromLast) _iClip = _iLastClip;
+				else _iClip = _iLastClip = 0;
+				if (isContinueFromLast) {
+					_iLastFrIC -= (_iLastFrIC % _fps); // adjust to nearest keyframe
+					_iFrIC = max(_iLastFrIC - mod_dynamic_length, 0); // reserve a number of frames to compute bg
+				}
+				else {
+					_iFrIC = _iLastFrIC = 1;
+				}
+				_cps = cps; // get cps and jump length
+				_jump = _fps / _cps - 1;
+				if (!_pClip->set(CV_CAP_PROP_POS_FRAMES, _iFrIC)) { // set frame pointer to required position
+					cout << "video pointer failed to reset to " << _iFrIC << endl;
+				} return true;
+			}
+			
 		public: // interfaces
 				/* clip operations */
 			bool appendClip(const string fNameClip) {
@@ -177,7 +204,7 @@ namespace toolvideo {
 			}
 
 			/* set operations */
-			void initRootPath(const char* rootPath) {
+			void initRootPath(const string rootPath) {
 				this->data_rootPath = rootPath;
 			}
 
@@ -342,6 +369,8 @@ namespace toolvideo {
 			return NULL;
 		}
 		string rootpath = toolpath::getParentDir(fVideo);
+		MVideoSrc* pVid = new MVideoSrc(rootpath, cps);
+		return pVid;
 	}
 	
 	MVideoSrc* createFromVideoSeries(const string rootpath, int cps) {
@@ -355,6 +384,7 @@ namespace toolvideo {
 namespace debug_toolvideo {
 	void debug_video() {
 		using namespace toolvideo;
+		using namespace toolsystem;
 		/* test func createFromVideoSeries */
 		cout << "##Test func createFromVideoSeries\n";
 		string rootpath = "data";
@@ -374,7 +404,39 @@ namespace debug_toolvideo {
 				cout << "\tSaved png file " << pathOutPng.c_str() << endl;
 			if (iFr >= 10) break;
 		}
-
+		
+		/* test func createFromSingleVideo */
+		cout << "##Test func createFromSingleVideo\n";
+		MVideoSrc* pOneVid = createFromSingleVideo(toolpath::joinPath(rootpath, "001-2018-09-26-10.00.00-12.00.00.avi"), 1);
+		Mat imgGr;
+		Mat imgGr32;
+		Mat imgAvg32;
+		Mat imgAvg;
+		MSystemInfo sys;
+		string pathfBg = toolpath::joinPath(rootpath, "bg.png");
+		iFr = 0;
+		while (pOneVid->readPerCall(imgFr)) {
+			if(iFr == 0) {
+				imgAvg32 = Mat::zeros(imgFr.size(), CV_32FC1);
+			}
+			cvtColor(imgFr, imgGr, CV_BGR2GRAY);
+			imgGr.convertTo(imgGr32, CV_32F);
+			imgAvg32 += imgGr32;
+			iFr++;
+			if (iFr % 20 == 0) {
+				float ratioCpu = sys.getCpuUseRatio();
+				float ratioRam = sys.getRamUseRatio();
+				cout << "\tAccumulating frame-#" << iFr << " to the background; CPU use-ratio = " << ratioCpu * 100 << "%; RAM use-ratio = " << ratioRam * 100 << "%\n";
+			}
+			if (iFr >= 400) break;
+		} imgAvg32 /= iFr;
+		imgAvg32.convertTo(imgAvg, CV_8UC3);
+		cvtColor(imgAvg, imgAvg, CV_GRAY2BGR);
+		rectangle(imgAvg, Rect(100, 100, 20, 20), Scalar(0, 0, 255), 1);
+		if(!imwrite(pathfBg.c_str(), imgAvg))
+			cout << "\tFailed to save background image " << pathfBg.c_str() << endl;
+		else
+			cout << "\tSaved background image " << pathfBg.c_str() << endl;
 	}
 }
 

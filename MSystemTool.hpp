@@ -1,6 +1,8 @@
 //===========================
 //====>  MSystemTool
 //===========================
+#ifndef _MSYSTEMTOOL_HPP_
+#define _MSYSTEMTOOL_HPP_
 #if defined(__linux__)
 	#include <fstream>
 	#include <stdlib.h>
@@ -17,8 +19,6 @@
 #include <stdio.h>
 using namespace std;
 
-#ifndef _MSYSTEMTOOL_HPP_
-#define _MSYSTEMTOOL_HPP_
 namespace toolsystem {
 #define UNIT_GB (1024 * 1024 * 1024)
 	class MSystemInfo {
@@ -146,7 +146,7 @@ namespace toolsystem {
 			tmKernBef = tmKernAft;
 			tmUsrBef = tmUsrAft;
 			HANDLE hSampl = CreateEventA(NULL, FALSE, FALSE, NULL);
-			WaitForSingleObject(hSampl, 1000);
+			WaitForSingleObject(hSampl, 10);
 			isOk = GetSystemTimes(&tmIdlAft, &tmKernAft, &tmUsrAft);
 			__int64 tmIdlDiff = this->CompareFileTime(tmIdlBef, tmIdlAft);
 			__int64 tmKernDiff = this->CompareFileTime(tmKernBef, tmKernAft);

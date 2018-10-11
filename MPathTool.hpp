@@ -1,3 +1,7 @@
+
+#ifndef _MPATHTOOL_HPP_
+#define _MPATHTOOL_HPP_
+
 #if defined(__linux__)
 	#include <sys/stat.h>
 	#include <dirent.h>
@@ -17,8 +21,6 @@
 #include <vector>
 #include "MStringTool.hpp"
 using namespace std;
-#ifndef _MPATHTOOL_HPP_
-#define _MPATHTOOL_HPP_
 
 namespace toolpath {
 
